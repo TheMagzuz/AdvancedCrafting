@@ -1,0 +1,11 @@
+name: AdvancedCrafting
+<<<<<<< HEAD
+main: me.themagzuz.advancedcrafting.AdvancedCrafting
+=======
+main: me.themagzuz.AdvancedCrafting
+>>>>>>> refs/remotes/origin/Main
+version: 0.1
+commands:
+   craft:
+      description: Opens the crafting interface
+      usage: /<command>
