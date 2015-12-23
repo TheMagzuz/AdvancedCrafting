@@ -1,11 +1,12 @@
 name: AdvancedCrafting
-<<<<<<< HEAD
 main: me.themagzuz.advancedcrafting.AdvancedCrafting
-=======
-main: me.themagzuz.AdvancedCrafting
->>>>>>> refs/remotes/origin/Main
 version: 0.1
+authors: [TheMagzuz]
 commands:
    craft:
       description: Opens the crafting interface
       usage: /<command>
+   cadmin:
+      description: Admin command for Advanced Crafting
+      usage: /<command> [SubCommand]
+   
