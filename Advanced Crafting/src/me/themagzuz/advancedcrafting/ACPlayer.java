@@ -75,8 +75,16 @@ public class ACPlayer {
 			pl.getLogger().severe("Tried to access a page that does not exist");
 			player.sendMessage(ChatColor.RED + "Tried to access a page that does not exist");
 			player.closeInventory();
+			return;
 		}
-		
+		if (page-1 == 0){
+			pl.getPages().get(page-1).setItem(45, null);
+		} else {
+			pl.getPages().get(page-1).setItem(45, pl.getPrevPageItem());
+		}
+		page--;
+		pl.getPages().get(page).setItem(53, pl.getNextPageItem());
+		//pl.getPages().get(page).setItem(49, );
 	}
 	
 	public UUID getID(){
@@ -98,5 +106,9 @@ public class ACPlayer {
 	
 	public Player getPlayer(){
 		return player;
+	}
+	
+	public void SetPage(int val){
+		page = val;
 	}
 }

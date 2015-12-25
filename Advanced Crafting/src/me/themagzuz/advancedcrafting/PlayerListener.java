@@ -4,7 +4,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -42,6 +44,19 @@ public class PlayerListener implements Listener{
 	@EventHandler
 	public void OnPlayerJoin(PlayerJoinEvent e){
 		new ACPlayer(e.getPlayer().getUniqueId());
+	}
+	
+	@EventHandler
+	public void OnInvClose(InventoryCloseEvent e){
+		if (e.getInventory().equals(pl.getRecInv())){
+			ACPlayer.getACPlayer(e.getPlayer().getUniqueId()).SetPage(-1);
+		}
+	}
+	
+	@EventHandler
+	public void OnPlayerLeave(PlayerQuitEvent e){
+		ACPlayer.getPlayers().remove(ACPlayer.getACPlayer(e.getPlayer().getUniqueId()));
+		
 	}
 	
 }

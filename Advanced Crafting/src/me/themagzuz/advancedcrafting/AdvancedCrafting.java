@@ -17,6 +17,8 @@ import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import net.minecraft.server.v1_8_R3.Enchantment;
+
 public class AdvancedCrafting extends JavaPlugin{
 	
 	//NOTICE: EVERYTHING SHOULD BE OBJECT BASED, AVOID STATICS, USE PUBLIC METHODS, AND SAVE KITTENS!!!
@@ -40,6 +42,7 @@ public class AdvancedCrafting extends JavaPlugin{
 	
 	private ItemStack prevPageItem;
 	
+	private ItemStack pageDisplay;
 	
 	/**
 	 * NEVER use this. This is only for use in the static getter function
@@ -70,7 +73,8 @@ public class AdvancedCrafting extends JavaPlugin{
 	}
 	
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args){			
-	Player p = (Player) sender;
+	if (sender instanceof Player){
+		Player p = (Player) sender;
 	if (cmd.getName().equalsIgnoreCase("cadmin")){
 		if (p.hasPermission(admin)){	
 		if (args.length >= 1){
@@ -82,6 +86,8 @@ public class AdvancedCrafting extends JavaPlugin{
 				}else if (args[0].equalsIgnoreCase("getpagecount")){
 					p.sendMessage(pages.size() + "");
 				
+			} else if (args[0].equalsIgnoreCase("getpage")){
+				p.sendMessage(ACPlayer.getACPlayer(p.getUniqueId()).getPage() + "");
 			}
 			
 			} else {
@@ -103,6 +109,21 @@ public class AdvancedCrafting extends JavaPlugin{
 			
 			
 		}
+	} else{
+	
+		if (args.length >=1){
+			if (cmd.getName().equalsIgnoreCase("cadmin")){
+			if (args[0].equalsIgnoreCase("printplayers")){
+				for (ACPlayer pla : ACPlayer.getPlayers()){
+					pl.getLogger().info(pla.getPlayer().getName());
+				}
+			}
+			}
+		}
+	}
+	
+		
+	
 		
 		return true;
 	}
@@ -139,6 +160,7 @@ public class AdvancedCrafting extends JavaPlugin{
 		meta.setLore(lore);
 		meta.setDisplayName(ChatColor.WHITE + (ChatColor.BOLD + "Next Page"));
 		nextPageItem.setItemMeta(meta);
+		
 		prevPageItem = new ItemStack(Material.STAINED_GLASS_PANE, 1, (byte) 7);
 		ItemMeta meta2 = prevPageItem.getItemMeta();
 		List<String> lore2 = new ArrayList<String>();
@@ -146,6 +168,11 @@ public class AdvancedCrafting extends JavaPlugin{
 		meta2.setLore(lore2);
 		meta2.setDisplayName(ChatColor.WHITE + (ChatColor.BOLD + "Previous Page"));
 		prevPageItem.setItemMeta(meta2);
+		
+		pageDisplay = new ItemStack(Material.GOLD_BLOCK, 1);
+		ItemMeta meta3 = pageDisplay.getItemMeta();
+		meta3.setDisplayName("Page ");
+		//meta3.addEnchant(Enchantment.LURE, 0, true)
 	}
 
 	public ItemStack getNextPageItem(){
