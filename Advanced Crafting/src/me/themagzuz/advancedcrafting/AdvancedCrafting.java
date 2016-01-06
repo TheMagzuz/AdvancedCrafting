@@ -9,6 +9,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -17,6 +18,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.json.simple.parser.ParseException;
 import org.bukkit.enchantments.Enchantment;
 
 
@@ -45,6 +47,8 @@ public class AdvancedCrafting extends JavaPlugin{
 	
 	private ItemStack pageDisplay;
 	
+	private boolean debugMode;
+	
 	/**
 	 * NEVER use this. This is only for use in the static getter function
 	 */
@@ -65,10 +69,20 @@ public class AdvancedCrafting extends JavaPlugin{
 		for (Player p : Bukkit.getOnlinePlayers()){
 			new ACPlayer(p.getUniqueId());
 			p.closeInventory();
+			p.updateInventory();
 		}
 		List<ItemStack> rec = Arrays.asList(new ItemStack(Material.DIRT, 2)/*, new ItemStack(Material.COBBLESTONE), new ItemStack(Material.DIAMOND), new ItemStack(Material.IRON_INGOT), new ItemStack(Material.GOLD_INGOT)*/);
 		List<ItemStack> out = Arrays.asList(new ItemStack(Material.APPLE));
 		new AdvancedRecipe("Test", Material.APPLE, true, rec, out);
+		FileConfiguration config = pl.getConfig();
+		if (!config.isSet("DebugMode")){
+			config.set("DebugMode", false);
+		}
+		pl.saveConfig();
+		pl.reloadConfig();
+		debugMode = config.getBoolean("DebugMode");
+		
+		
 	}
 	
 
@@ -94,6 +108,10 @@ public class AdvancedCrafting extends JavaPlugin{
 				
 			} else if (args[0].equalsIgnoreCase("getpage")){
 				p.sendMessage(ACPlayer.getACPlayer(p.getUniqueId()).getPage() + "");
+			} else if (args[0].equalsIgnoreCase("item")){
+				p.getInventory().addItem(StringToItemStack("1:0:10"));
+				p.sendMessage("Gave you an item");
+				p.sendMessage("§cThis is a debug command. If you did not recive an item, please contact TheMagzuz on bukkit.org");
 			}
 			
 			} else {
@@ -208,8 +226,43 @@ public class AdvancedCrafting extends JavaPlugin{
 		return pageDisplay;
 	}
 	
+	public boolean getInDebugMode(){
+		return debugMode;
+	}
+	
+	/*
+	 * SYNTAX: ITEMID:DATAVALUE:COUNT
+	 * Note that the item id is numeral.
+	 */
+	
+	@SuppressWarnings("deprecation")
 	public ItemStack StringToItemStack(String str){
-		return null;
+		int item;
+		int damage;
+		int size;
+		try{
+			item = Integer.parseInt(str.split(":")[0]);
+			damage = Integer.parseInt(str.split(":")[1]);
+			size = Integer.parseInt(str.split(":")[2]);
+			
+			
+		} catch(Exception e){
+			pl.getLogger().severe(String.format("String with value \"%s\" was passed but not recognized as an item. The syntax is \"ID:DATA:COUNT\", all values should be numbers", str));
+			pl.getLogger().severe("This might also be an error on the plugins side. If you belive that your syntax is correct, please send your config.yml for this plugin to TheMagzuz on bukkit.org");
+			pl.getLogger().severe("Plugin disabled");
+			pl.getServer().getPluginManager().disablePlugin(this);
+			return null;
+		}
+		
+		ItemStack is;
+		
+		is = new ItemStack(Material.getMaterial(item), size, (byte) damage);
+		if (pl.getInDebugMode()){
+			pl.getLogger().info("ID = " + item);
+			pl.getLogger().info("DATA = " + damage);
+			pl.getLogger().info("SIZE = " + size);
+		}
+		return is;
 	}
 	
 	public Inventory getRecListTemplate(){
@@ -263,6 +316,7 @@ public class AdvancedCrafting extends JavaPlugin{
 		p.openInventory(inv);
 	}
 	
+	@SuppressWarnings("deprecation")
 	public void RemoveItems(Player p, AdvancedRecipe rec){
 		Inventory inv = p.getInventory();
 		List<ItemStack> ings = rec.getIngs(); 

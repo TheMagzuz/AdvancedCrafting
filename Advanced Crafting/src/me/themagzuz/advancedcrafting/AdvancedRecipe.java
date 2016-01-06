@@ -34,20 +34,22 @@ public class AdvancedRecipe {
 		}
 		icon.setItemMeta(meta);
 		AddItem(icon);
+		
+		if (pl.getInDebugMode())
 		pl.getLogger().info("Created an advanced recipe with the name " + name);
+		
 		pl.getRecipes().add(this);
+		
 	}
 	
 	public ItemStack getItem(){
 		return icon;
 	}
 	private void AddItem(ItemStack item){
-		pl.getLogger().info("1");
 		for (Inventory inv : pl.getPages()){
-			pl.getLogger().info("2");
 			if (inv.firstEmpty() != -1){
 		
-				
+				if (pl.getInDebugMode())
 				pl.getLogger().info("Added the item to an inventory");
 			
 				inv.addItem(item);
