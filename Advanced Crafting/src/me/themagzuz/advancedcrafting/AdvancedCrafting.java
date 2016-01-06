@@ -49,15 +49,18 @@ public class AdvancedCrafting extends JavaPlugin{
 	
 	private boolean debugMode;
 	
-	/**
+	/*
 	 * NEVER use this. This is only for use in the static getter function
 	 */
 	private static AdvancedCrafting pl;
+	
+	FileConfiguration config = pl.getConfig();
 	
 	private List<Inventory> pages = new ArrayList<Inventory>();
 	
 	private List<AdvancedRecipe> recipes = new ArrayList<AdvancedRecipe>();
 	
+	@SuppressWarnings("deprecation")
 	@Override
 	public void onEnable(){
 		_pl = this;
@@ -74,7 +77,6 @@ public class AdvancedCrafting extends JavaPlugin{
 		List<ItemStack> rec = Arrays.asList(new ItemStack(Material.DIRT, 2)/*, new ItemStack(Material.COBBLESTONE), new ItemStack(Material.DIAMOND), new ItemStack(Material.IRON_INGOT), new ItemStack(Material.GOLD_INGOT)*/);
 		List<ItemStack> out = Arrays.asList(new ItemStack(Material.APPLE));
 		new AdvancedRecipe("Test", Material.APPLE, true, rec, out);
-		FileConfiguration config = pl.getConfig();
 		if (!config.isSet("DebugMode")){
 			config.set("DebugMode", false);
 		}
@@ -203,6 +205,12 @@ public class AdvancedCrafting extends JavaPlugin{
 		meta4.setDisplayName(" ");
 		seperator.setItemMeta(meta4);
 	}
+	
+	public void CreateRecipes(){
+		if(config.isSet("Recipes")){
+			
+		}
+	}
 
 	public ItemStack getNextPageItem(){
 		return nextPageItem;
@@ -264,6 +272,7 @@ public class AdvancedCrafting extends JavaPlugin{
 		}
 		return is;
 	}
+
 	
 	public Inventory getRecListTemplate(){
 		return recList;

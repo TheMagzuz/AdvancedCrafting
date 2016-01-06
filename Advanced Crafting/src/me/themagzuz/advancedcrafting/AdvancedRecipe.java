@@ -42,6 +42,8 @@ public class AdvancedRecipe {
 		
 	}
 	
+	
+	
 	public ItemStack getItem(){
 		return icon;
 	}
