@@ -27,6 +27,8 @@ public class ACPlayer {
 	
 	private static List<ACPlayer> players = new ArrayList<ACPlayer>();
 	
+	private AdvancedRecipe selectedRecipe;
+	
 	public ACPlayer(UUID p){
 		id = p;
 		if (Bukkit.getPlayer(p) != null){
@@ -60,14 +62,16 @@ public class ACPlayer {
 		}
 		if (page+1 == 0){
 			pl.getPages().get(0).setItem(45, null);
-			player.openInventory(pl.getRecInv());
+			player.openInventory(pl.getPages().get(0));
 		} else {
 			pl.getPages().get(page+1).setItem(45, pl.getPrevPageItem());
 		}
 		page++;
+		pl.SetPage(page+1);
 		if (page == pl.getPages().size()-1){
 			pl.getPages().get(page).setItem(53, null);
 		}
+		pl.getPages().get(page).setItem(49, pl.getPageDisplay());
 	}
 	public void prevPage(){
 
@@ -85,6 +89,7 @@ public class ACPlayer {
 		page--;
 		pl.getPages().get(page).setItem(53, pl.getNextPageItem());
 		//pl.getPages().get(page).setItem(49, );
+		pl.SetPage(page+1);
 	}
 	
 	public UUID getID(){
@@ -110,5 +115,26 @@ public class ACPlayer {
 	
 	public void SetPage(int val){
 		page = val;
+	}
+	
+	public String toString(){
+		String out = (page + ":" + player.getName() +":" + id.toString());
+		return out;
+	}
+	
+	public void SetSelectedRecipe(AdvancedRecipe rec){
+		selectedRecipe = rec;
+	}
+	
+	public boolean canCraft(AdvancedRecipe rec){
+		for (ItemStack is : rec.getIngs()){
+			if (!(player.getInventory().containsAtLeast(is, is.getAmount()))) return false;
+			else continue;
+		}
+		return true;
+	}
+	
+	public AdvancedRecipe getSelectedRecipe(){
+		return selectedRecipe;
 	}
 }

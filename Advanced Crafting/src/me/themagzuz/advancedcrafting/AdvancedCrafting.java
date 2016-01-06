@@ -1,6 +1,7 @@
 package me.themagzuz.advancedcrafting;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.bukkit.Bukkit;
@@ -16,8 +17,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.enchantments.Enchantment;
 
-import net.minecraft.server.v1_8_R3.Enchantment;
 
 public class AdvancedCrafting extends JavaPlugin{
 	
@@ -33,7 +34,7 @@ public class AdvancedCrafting extends JavaPlugin{
 	
 	private Permission admin = new Permission("AdvancedCrafting.admin");
 	
-	
+	private ItemStack seperator;
 	
 	/* PAGE ITEMS ETC. */
 	
@@ -51,6 +52,8 @@ public class AdvancedCrafting extends JavaPlugin{
 	
 	private List<Inventory> pages = new ArrayList<Inventory>();
 	
+	private List<AdvancedRecipe> recipes = new ArrayList<AdvancedRecipe>();
+	
 	@Override
 	public void onEnable(){
 		_pl = this;
@@ -61,8 +64,11 @@ public class AdvancedCrafting extends JavaPlugin{
 		InitPages();
 		for (Player p : Bukkit.getOnlinePlayers()){
 			new ACPlayer(p.getUniqueId());
+			p.closeInventory();
 		}
-		
+		List<ItemStack> rec = Arrays.asList(new ItemStack(Material.DIRT, 2)/*, new ItemStack(Material.COBBLESTONE), new ItemStack(Material.DIAMOND), new ItemStack(Material.IRON_INGOT), new ItemStack(Material.GOLD_INGOT)*/);
+		List<ItemStack> out = Arrays.asList(new ItemStack(Material.APPLE));
+		new AdvancedRecipe("Test", Material.APPLE, true, rec, out);
 	}
 	
 
@@ -115,7 +121,7 @@ public class AdvancedCrafting extends JavaPlugin{
 			if (cmd.getName().equalsIgnoreCase("cadmin")){
 			if (args[0].equalsIgnoreCase("printplayers")){
 				for (ACPlayer pla : ACPlayer.getPlayers()){
-					pl.getLogger().info(pla.getPlayer().getName());
+					pl.getLogger().info(pla.toString());
 				}
 			}
 			}
@@ -172,7 +178,12 @@ public class AdvancedCrafting extends JavaPlugin{
 		pageDisplay = new ItemStack(Material.GOLD_BLOCK, 1);
 		ItemMeta meta3 = pageDisplay.getItemMeta();
 		meta3.setDisplayName("Page ");
-		//meta3.addEnchant(Enchantment.LURE, 0, true)
+		meta3.addEnchant(Enchantment.LURE, 1, true);
+		
+		seperator = new ItemStack(Material.STAINED_GLASS_PANE, 1, (byte) 7);
+		ItemMeta meta4 = seperator.getItemMeta();
+		meta4.setDisplayName(" ");
+		seperator.setItemMeta(meta4);
 	}
 
 	public ItemStack getNextPageItem(){
@@ -187,5 +198,102 @@ public class AdvancedCrafting extends JavaPlugin{
 		return prevPageItem;
 	}
 	
+	public void SetPage(int set){
+		ItemMeta meta = pageDisplay.getItemMeta();
+		meta.setDisplayName("§6§lPage " + set);
+		pageDisplay.setItemMeta(meta);
+	}
+	
+	public ItemStack getPageDisplay(){
+		return pageDisplay;
+	}
+	
+	public ItemStack StringToItemStack(String str){
+		return null;
+	}
+	
+	public Inventory getRecListTemplate(){
+		return recList;
+	}
+	
+	public List<AdvancedRecipe> getRecipes(){
+		return recipes;
+	}
+	//4, 13, 22
+	public void OpenRecipe(AdvancedRecipe rec, Player p){
+		inv.clear();
+		int ingSlot = 0;
+		for (int i = 0; i<inv.getSize(); i++){
+			if (i != 4 && i != 13 && i != 22){
+				if (i < rec.getIngs().size())
+					inv.setItem(ingSlot, rec.getIngs().get(i));
+				else break;
+			} else {
+				if (i < rec.getIngs().size()){
+				ingSlot += 5;
+				inv.setItem(ingSlot, rec.getIngs().get(i));
+				} else break;
+			}
+			ingSlot++;
+		}
+			
+		
+
+		inv.setItem(4, seperator);
+		inv.setItem(13, seperator);
+		inv.setItem(22, seperator);
+		
+		int resSlot = 5;
+		for (int i = 0; i<inv.getSize(); i++){
+			if (i != 9 && i != 18 ){
+				if (i < rec.getResults().size()){
+					inv.setItem(resSlot, rec.getResults().get(i));
+				} else break;
+			} else {
+				if (i <= rec.getResults().size()){
+					resSlot += 5;
+					inv.setItem(resSlot, rec.getIngs().get(i));
+				} else break;
+			}
+			resSlot++;
+		}
+		
+		ACPlayer.getACPlayer(p.getUniqueId()).SetSelectedRecipe(rec);
+		
+		p.openInventory(inv);
+	}
+	
+	public void RemoveItems(Player p, AdvancedRecipe rec){
+		Inventory inv = p.getInventory();
+		List<ItemStack> ings = rec.getIngs(); 
+		
+		for (ItemStack is : ings){
+			int count = is.getAmount();
+			//p.sendMessage(count + "");
+			for (ItemStack i : inv){
+				try{
+					if (i.getItemMeta().equals(is.getItemMeta()) && i.getType().equals(is.getType())){
+						if (i.getAmount() >= count){
+							//p.sendMessage(i.getAmount() + "count 1");
+							i.setAmount(i.getAmount() - count);
+							//p.sendMessage(i.getAmount() + " count 2");
+							count = 0;
+						} else {
+							count -= i.getAmount();
+							i.setAmount(0);
+						}
+					}
+					if (count <= 0){
+						//p.sendMessage(count + "");
+						p.updateInventory();
+						return;
+					}
+				} catch (NullPointerException e){
+					
+				}
+			}
+		}
+		
+	}
 	
 }

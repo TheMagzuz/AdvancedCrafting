@@ -35,8 +35,45 @@ public class PlayerListener implements Listener{
 				ACPlayer.getACPlayer(clicker.getUniqueId()).nextPage();
 			} else if (clicked.equals(pl.getPrevPageItem())){
 				ACPlayer.getACPlayer(clicker.getUniqueId()).prevPage();
+			} else {
+				
+				for (AdvancedRecipe rec : pl.getRecipes()){
+					if (rec.getItem().equals(clicked)){
+						pl.OpenRecipe(rec, clicker);
+					}
+				}
+				
 			}
 			
+			e.setCancelled(true);
+		} else if (e.getInventory().equals(pl.getInv())){
+			Player clicker = (Player) e.getWhoClicked();
+			if (ACPlayer.getACPlayer(clicker.getUniqueId()).canCraft(ACPlayer.getACPlayer(clicker.getUniqueId()).getSelectedRecipe())){
+				int count = 0;
+				ItemStack[] inventory = clicker.getInventory().getContents();
+				for (int i = 0; i < inventory.length; i++){
+					try{
+					if (inventory[i].equals(null)){
+						count++;
+					}
+					} catch (NullPointerException er){
+						count++;
+					}
+				}
+				if (count >= ACPlayer.getACPlayer(clicker.getUniqueId()).getSelectedRecipe().getResults().size()){
+					for (ItemStack is : ACPlayer.getACPlayer(clicker.getUniqueId()).getSelectedRecipe().getResults()){
+						clicker.getInventory().addItem(is);
+						
+					}
+
+					pl.RemoveItems(clicker, ACPlayer.getACPlayer(clicker.getUniqueId()).getSelectedRecipe());
+					
+				} else{
+					clicker.sendMessage("§cYou do not have enough inventory space to do that!");
+				}
+			} else {
+				clicker.sendMessage("§cYou do not have the required materials to craft that!");
+			}
 			e.setCancelled(true);
 		}
 	}
