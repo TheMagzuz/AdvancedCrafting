@@ -1,5 +1,7 @@
 package me.themagzuz.advancedcrafting;
 
+import java.io.IOException;
+
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -80,7 +82,6 @@ public class PlayerListener implements Listener{
 	
 	@EventHandler
 	public void OnPlayerJoin(PlayerJoinEvent e){
-		new ACPlayer(e.getPlayer().getUniqueId());
 	}
 	
 	@EventHandler

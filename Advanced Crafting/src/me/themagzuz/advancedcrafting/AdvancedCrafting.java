@@ -1,5 +1,7 @@
 package me.themagzuz.advancedcrafting;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -10,6 +12,7 @@ import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -25,6 +28,8 @@ import org.bukkit.enchantments.Enchantment;
 public class AdvancedCrafting extends JavaPlugin{
 	
 	//NOTICE: EVERYTHING SHOULD BE OBJECT BASED, AVOID STATICS, USE PUBLIC METHODS, AND SAVE KITTENS!!!
+	
+	//TODO: Create a custom recipes.yml 
 	
 	private AdvancedCrafting _pl;
 	
@@ -54,7 +59,11 @@ public class AdvancedCrafting extends JavaPlugin{
 	 */
 	private static AdvancedCrafting pl;
 	
-	FileConfiguration config = pl.getConfig();
+	private FileConfiguration config;
+	
+	private FileConfiguration recCfg;
+	
+	private File recCfgFile;
 	
 	private List<Inventory> pages = new ArrayList<Inventory>();
 	
@@ -74,17 +83,61 @@ public class AdvancedCrafting extends JavaPlugin{
 			p.closeInventory();
 			p.updateInventory();
 		}
+
+		config = pl.getConfig();
 		List<ItemStack> rec = Arrays.asList(new ItemStack(Material.DIRT, 2)/*, new ItemStack(Material.COBBLESTONE), new ItemStack(Material.DIAMOND), new ItemStack(Material.IRON_INGOT), new ItemStack(Material.GOLD_INGOT)*/);
 		List<ItemStack> out = Arrays.asList(new ItemStack(Material.APPLE));
 		new AdvancedRecipe("Test", Material.APPLE, true, rec, out);
 		if (!config.isSet("DebugMode")){
 			config.set("DebugMode", false);
 		}
+		int[][] nums = new int[3][3];
+		for (int i = 0; i < nums.length; i++){
+			for (int j = 0; j < nums[i].length; i++){
+				nums[i][j] = i*j;
+				pl.getLogger().info(String.format("Coordinates: %s, %s Value: %s", i, j, nums[i][j]));
+				
+			}
+		}
+		
 		pl.saveConfig();
 		pl.reloadConfig();
 		debugMode = config.getBoolean("DebugMode");
 		
+		try{
+			if (pl.getResource("Recipes.yml") == null){
+				recCfgFile = new File(pl.getDataFolder(), "Recipes.yml");
+			}
+		} catch (Exception e){
+			pl.getLogger().fine("Assuming there was no Recipes.yml file, creating one");
+			recCfgFile = new File(pl.getDataFolder(), "Recipes.yml");
+		}
+		if(pl.getInDebugMode()){
+			pl.getLogger().info("Data folder path: " + pl.getDataFolder().getPath());
+		}
+		recCfg = YamlConfiguration.loadConfiguration(recCfgFile);
+		try {
+			recCfg.save(recCfgFile);
+			pl.reloadConfig();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		List<List<String>> str = new ArrayList<List<String>>();
+		List<String> temp = new ArrayList<String>();
+		temp.add("Foo");
+		str.add(new ArrayList<String>());
 		
+		//pl.recCfg.set("FooList", str);
+		try {
+			pl.recCfg.save(recCfgFile);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		pl.saveConfig();
+		pl.reloadConfig();
+		
+		pl.CreateRecipes();
 	}
 	
 
@@ -114,6 +167,13 @@ public class AdvancedCrafting extends JavaPlugin{
 				p.getInventory().addItem(StringToItemStack("1:0:10"));
 				p.sendMessage("Gave you an item");
 				p.sendMessage("§cThis is a debug command. If you did not recive an item, please contact TheMagzuz on bukkit.org");
+			} else if (args[0].equalsIgnoreCase("list")){
+				List<?> rec = pl.recCfg.getList("FooList");
+				for(int i = 0; i < rec.size(); i++){
+					p.sendMessage(rec.get(i).toString());
+				}
+			} else if (args[0].equalsIgnoreCase("reload")){
+				pl.reloadConfig();
 			}
 			
 			} else {
@@ -207,11 +267,30 @@ public class AdvancedCrafting extends JavaPlugin{
 	}
 	
 	public void CreateRecipes(){
-		if(config.isSet("Recipes")){
+		if(recCfg.isSet("Recipes")){
+			
+			try {
+				pl.recCfg.set("Recipes", null);
+				pl.recCfg.save(pl.recCfgFile);
+				pl.saveConfig();
+				pl.reloadConfig();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			if (pl.recCfg.getList("Recipes").isEmpty()){
+				return;
+			} else {
+				List<?> rec = pl.recCfg.getList("Recipes");
+				for(int i = 0; i < rec.size()-1; i++){
+					pl.getLogger().info(rec.get(i).toString());
+				}
+			}
 			
 		}
 	}
 
+	/*****************GETTERS AND SETTERS*********************/
+	
 	public ItemStack getNextPageItem(){
 		return nextPageItem;
 	}
@@ -237,6 +316,22 @@ public class AdvancedCrafting extends JavaPlugin{
 	public boolean getInDebugMode(){
 		return debugMode;
 	}
+	public Inventory getRecListTemplate(){
+		return recList;
+	}
+	
+	public List<AdvancedRecipe> getRecipes(){
+		return recipes;
+	}
+	
+	public FileConfiguration getRecipesCfg(){
+		return recCfg;
+	}
+	
+	public File getRecipesFile(){
+		return recCfgFile;
+	}
+	/*****************END GETTERS AND SETTERS*********************/
 	
 	/*
 	 * SYNTAX: ITEMID:DATAVALUE:COUNT
@@ -271,16 +366,11 @@ public class AdvancedCrafting extends JavaPlugin{
 			pl.getLogger().info("SIZE = " + size);
 		}
 		return is;
+		
 	}
 
 	
-	public Inventory getRecListTemplate(){
-		return recList;
-	}
-	
-	public List<AdvancedRecipe> getRecipes(){
-		return recipes;
-	}
+
 	//4, 13, 22
 	public void OpenRecipe(AdvancedRecipe rec, Player p){
 		inv.clear();
