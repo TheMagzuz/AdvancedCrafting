@@ -19,6 +19,8 @@ public class AdvancedRecipe {
 	
 	private List<ItemStack> ing;
 	
+	
+	
 	private List<ItemStack> res;
 	
 	public AdvancedRecipe(String nm, Material ico, boolean glow, List<ItemStack> ingredients, List<ItemStack> results){
@@ -61,6 +63,8 @@ public class AdvancedRecipe {
 			
 			
 		}
+	
+	
 	
 	public List<ItemStack> getIngs(){
 		return ing;

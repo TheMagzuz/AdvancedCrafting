@@ -91,14 +91,6 @@ public class AdvancedCrafting extends JavaPlugin{
 		if (!config.isSet("DebugMode")){
 			config.set("DebugMode", false);
 		}
-		int[][] nums = new int[3][3];
-		for (int i = 0; i < nums.length; i++){
-			for (int j = 0; j < nums[i].length; i++){
-				nums[i][j] = i*j;
-				pl.getLogger().info(String.format("Coordinates: %s, %s Value: %s", i, j, nums[i][j]));
-				
-			}
-		}
 		
 		pl.saveConfig();
 		pl.reloadConfig();
@@ -122,18 +114,8 @@ public class AdvancedCrafting extends JavaPlugin{
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		List<List<String>> str = new ArrayList<List<String>>();
-		List<String> temp = new ArrayList<String>();
-		temp.add("Foo");
-		str.add(new ArrayList<String>());
+
 		
-		//pl.recCfg.set("FooList", str);
-		try {
-			pl.recCfg.save(recCfgFile);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		pl.saveConfig();
 		pl.reloadConfig();
 		
@@ -141,6 +123,9 @@ public class AdvancedCrafting extends JavaPlugin{
 	}
 	
 
+	
+
+	
 	
 	@Override
 	public void onDisable(){
@@ -228,15 +213,17 @@ public class AdvancedCrafting extends JavaPlugin{
 	public Inventory getRecInv(){
 		return recList;
 	}
+		
+		private void InitPages(){
+			
+			
+			for (int i = 0; i <= Math.ceil(recipes.size()/54); i++){
+				pages.add(recList);
+			}
+
+			
+		}
 	
-	private void InitPages(){
-		
-		//TODO: Add configurable pages
-		pages.add(recList);
-		pages.add(recList);
-		pages.add(recList);
-		
-	}
 	
 	private void InitItems(){
 		nextPageItem = new ItemStack(Material.STAINED_GLASS_PANE, 1, (byte) 7);
