@@ -1,15 +1,20 @@
 package me.themagzuz.advancedcrafting;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.bukkit.Material;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-public class AdvancedRecipe {
+public class AdvancedRecipe implements ConfigurationSerializable{
 
 	private String name;
 	
@@ -19,9 +24,11 @@ public class AdvancedRecipe {
 	
 	private List<ItemStack> ing;
 	
-	
+	private Map<String, Object> map;
 	
 	private List<ItemStack> res;
+	
+	private int id;
 	
 	public AdvancedRecipe(String nm, Material ico, boolean glow, List<ItemStack> ingredients, List<ItemStack> results){
 		name = nm;
@@ -71,6 +78,42 @@ public class AdvancedRecipe {
 	}
 	public List<ItemStack> getResults(){
 		return res;
+	}
+
+
+
+	@Override
+	public Map<String, Object> serialize() {
+
+
+		
+		
+		
+		
+		
+		Map<String, Object> map = new HashMap<String, Object>();
+		
+		String path = "" + this.name;
+		
+		map.put(path + ".Name", this.name);
+		map.put(path + ".Item.ID", this.getItem().getTypeId());
+		map.put(path + ".Item.Data", 0);
+		map.put(path + ".Item.Name", this.name);
+		for (int i = 0; i < this.getIngs().size(); i++){
+			map.put(path + ".Ingredients." + i + ".ID", this.getIngs().get(i).getTypeId());
+		}
+		
+		this.map = map;
+		
+		return map;
+	}
+	
+	public AdvancedRecipe deserialize(Map<String, Object> in){
+		Object temp;
+		temp = in.get("Recipes.Item.Name");
+		pl.getLogger().info(temp.toString());
+		AdvancedRecipe rec = new AdvancedRecipe("Test1", Material.STONE, true, new ArrayList<ItemStack>(), new ArrayList<ItemStack>());
+		return rec;
 	}
 	
 	}

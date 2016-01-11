@@ -83,19 +83,6 @@ public class AdvancedCrafting extends JavaPlugin{
 			p.closeInventory();
 			p.updateInventory();
 		}
-
-		config = pl.getConfig();
-		List<ItemStack> rec = Arrays.asList(new ItemStack(Material.DIRT, 2)/*, new ItemStack(Material.COBBLESTONE), new ItemStack(Material.DIAMOND), new ItemStack(Material.IRON_INGOT), new ItemStack(Material.GOLD_INGOT)*/);
-		List<ItemStack> out = Arrays.asList(new ItemStack(Material.APPLE));
-		new AdvancedRecipe("Test", Material.APPLE, true, rec, out);
-		if (!config.isSet("DebugMode")){
-			config.set("DebugMode", false);
-		}
-		
-		pl.saveConfig();
-		pl.reloadConfig();
-		debugMode = config.getBoolean("DebugMode");
-		
 		try{
 			if (pl.getResource("Recipes.yml") == null){
 				recCfgFile = new File(pl.getDataFolder(), "Recipes.yml");
@@ -116,10 +103,30 @@ public class AdvancedCrafting extends JavaPlugin{
 		}
 
 		
+
+		pl.CreateRecipes();
+
+		config = pl.getConfig();
+		List<ItemStack> rec = Arrays.asList(new ItemStack(Material.DIRT, 2)/*, new ItemStack(Material.COBBLESTONE), new ItemStack(Material.DIAMOND), new ItemStack(Material.IRON_INGOT), new ItemStack(Material.GOLD_INGOT)*/);
+		List<ItemStack> out = Arrays.asList(new ItemStack(Material.APPLE));
+		AdvancedRecipe reci = new AdvancedRecipe("Test", Material.APPLE, true, rec, out);
+		pl.getRecipesCfg().createSection("Recipes", reci.serialize());
+		if (!config.isSet("DebugMode")){
+			config.set("DebugMode", false);
+		}
+		
+		debugMode = config.getBoolean("DebugMode");
+		
+		try {
+			recCfg.save(recCfgFile);
+			pl.reloadConfig();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
 		pl.saveConfig();
 		pl.reloadConfig();
 		
-		pl.CreateRecipes();
 	}
 	
 
