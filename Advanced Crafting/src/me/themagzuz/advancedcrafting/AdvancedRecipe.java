@@ -82,6 +82,7 @@ public class AdvancedRecipe implements ConfigurationSerializable{
 
 
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public Map<String, Object> serialize() {
 
@@ -101,6 +102,8 @@ public class AdvancedRecipe implements ConfigurationSerializable{
 		map.put(path + ".Item.Name", this.name);
 		for (int i = 0; i < this.getIngs().size(); i++){
 			map.put(path + ".Ingredients." + i + ".ID", this.getIngs().get(i).getTypeId());
+			map.put(path + ".Ingredients." + i + ".Name", this.getIngs().get(i).getItemMeta().getDisplayName());
+			map.put(path + ".Ingredients." + i + ".Count", this.getIngs().get(i).getAmount());
 		}
 		
 		this.map = map;
@@ -108,11 +111,13 @@ public class AdvancedRecipe implements ConfigurationSerializable{
 		return map;
 	}
 	
+	@SuppressWarnings({ "deprecation", "unused" })
 	public AdvancedRecipe deserialize(Map<String, Object> in){
 		Object temp;
-		temp = in.get("Recipes.Item.Name");
-		pl.getLogger().info(temp.toString());
+		temp = in.get("");
+		
 		AdvancedRecipe rec = new AdvancedRecipe("Test1", Material.STONE, true, new ArrayList<ItemStack>(), new ArrayList<ItemStack>());
+		
 		return rec;
 	}
 	

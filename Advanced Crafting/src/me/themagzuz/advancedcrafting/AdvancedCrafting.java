@@ -271,7 +271,7 @@ public class AdvancedCrafting extends JavaPlugin{
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			if (pl.recCfg.getList("Recipes").isEmpty()){
+			if (pl.recCfg.getList("").isEmpty()){
 				return;
 			} else {
 				List<?> rec = pl.recCfg.getList("Recipes");
