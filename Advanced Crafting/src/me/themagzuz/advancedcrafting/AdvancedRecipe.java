@@ -2,9 +2,11 @@ package me.themagzuz.advancedcrafting;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
@@ -30,14 +32,19 @@ public class AdvancedRecipe implements ConfigurationSerializable{
 	
 	private int id;
 	
-	public AdvancedRecipe(String nm, Material ico, boolean glow, List<ItemStack> ingredients, List<ItemStack> results){
+	private boolean glow;
+	
+	private static AdvancedCrafting _pl = AdvancedCrafting.getPl();
+	
+	public AdvancedRecipe(String nm, Material ico, boolean glw, List<ItemStack> ingredients, List<ItemStack> results){
 		name = nm;
 		icon = new ItemStack(ico);
 		ItemMeta meta = icon.getItemMeta();
 		ing = ingredients;
 		res = results;
+		glow = glw;
 		meta.setDisplayName(name);
-		if (glow){
+		if (glw){
 			meta.addEnchant(Enchantment.ARROW_DAMAGE, 1, true);
 			meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
 		}
@@ -79,6 +86,10 @@ public class AdvancedRecipe implements ConfigurationSerializable{
 	public List<ItemStack> getResults(){
 		return res;
 	}
+	
+	public String getName(){
+		return name;
+	}
 
 
 
@@ -94,7 +105,7 @@ public class AdvancedRecipe implements ConfigurationSerializable{
 		
 		Map<String, Object> map = new HashMap<String, Object>();
 		
-		String path = "" + this.name;
+		String path = "";
 		
 		map.put(path + ".Name", this.name);
 		map.put(path + ".Item.ID", this.getItem().getTypeId());
@@ -105,16 +116,33 @@ public class AdvancedRecipe implements ConfigurationSerializable{
 			map.put(path + ".Ingredients." + i + ".Name", this.getIngs().get(i).getItemMeta().getDisplayName());
 			map.put(path + ".Ingredients." + i + ".Count", this.getIngs().get(i).getAmount());
 		}
+		map.put(path + ".Glow", this.glow);
 		
 		this.map = map;
 		
 		return map;
 	}
 	
-	@SuppressWarnings({ "deprecation", "unused" })
-	public AdvancedRecipe deserialize(Map<String, Object> in){
+	@SuppressWarnings({ "deprecation", "unused", "rawtypes" })
+	public static AdvancedRecipe deserialize(Map<String, Object> in){
 		Object temp;
-		temp = in.get("");
+		temp = in.keySet();
+
+		int stage = ReadStage.NONE;
+		
+		Iterator i = in.keySet().iterator();
+		
+		while (i.hasNext()){
+			temp = i.next();
+			if (!StringUtils.containsIgnoreCase(in.get(temp.toString()).toString(), "MemorySection")){
+				_pl.getLogger().info(in.get(temp.toString()).toString());
+			} else if (StringUtils.containsIgnoreCase(in.get(temp.toString()).toString(), "Ingredients")){
+				stage = ReadStage.INGREDIENTS;
+				for (int i = 0; i < )
+					String str = "";
+			}
+			
+		}
 		
 		AdvancedRecipe rec = new AdvancedRecipe("Test1", Material.STONE, true, new ArrayList<ItemStack>(), new ArrayList<ItemStack>());
 		

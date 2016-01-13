@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import org.bukkit.Bukkit;
@@ -11,6 +12,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.MemorySection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -69,7 +71,7 @@ public class AdvancedCrafting extends JavaPlugin{
 	
 	private List<AdvancedRecipe> recipes = new ArrayList<AdvancedRecipe>();
 	
-	@SuppressWarnings("deprecation")
+	@SuppressWarnings({ "deprecation", "rawtypes" })
 	@Override
 	public void onEnable(){
 		_pl = this;
@@ -102,15 +104,40 @@ public class AdvancedCrafting extends JavaPlugin{
 			e.printStackTrace();
 		}
 
+		/*Iterator i = recCfg.getConfigurationSection("").getKeys(false).iterator();
+		
+		while (i.hasNext()){
+			pl.getLogger().info(i.next().toString());
+		}*/
+		
+		/*pl.getLogger().info(recCfg.getKeys(false).toArray().toString());
+		pl.getLogger().info(recCfg.getKeys(true).toString());*/
 		
 
-		pl.CreateRecipes();
+		//pl.CreateRecipes();
 
+		
+		
 		config = pl.getConfig();
 		List<ItemStack> rec = Arrays.asList(new ItemStack(Material.DIRT, 2)/*, new ItemStack(Material.COBBLESTONE), new ItemStack(Material.DIAMOND), new ItemStack(Material.IRON_INGOT), new ItemStack(Material.GOLD_INGOT)*/);
 		List<ItemStack> out = Arrays.asList(new ItemStack(Material.APPLE));
 		AdvancedRecipe reci = new AdvancedRecipe("Test", Material.APPLE, true, rec, out);
-		pl.getRecipesCfg().createSection("Recipes", reci.serialize());
+		pl.getRecipesCfg().createSection(reci.getName(), reci.serialize());
+		AdvancedRecipe recip = new AdvancedRecipe("Test1", Material.STONE, true, rec, out);
+		pl.getRecipesCfg().createSection(recip.getName(), recip.serialize());
+		
+		
+		
+		try{
+			pl.getRecipesCfg().save(recCfgFile);
+		} catch (IOException e){
+			e.printStackTrace();
+			pl.getLogger().severe("An error occured. Disabling plugin");
+			pl.getServer().getPluginManager().disablePlugin(this);
+		}
+		
+		AdvancedRecipe.deserialize(pl.getRecipesCfg().getConfigurationSection("Test").getValues(true));
+		
 		if (!config.isSet("DebugMode")){
 			config.set("DebugMode", false);
 		}
@@ -122,6 +149,8 @@ public class AdvancedCrafting extends JavaPlugin{
 			pl.reloadConfig();
 		} catch (IOException e) {
 			e.printStackTrace();
+			pl.getLogger().severe("An error occured. Disabling plugin");
+			pl.getServer().getPluginManager().disablePlugin(this);
 		}
 		
 		pl.saveConfig();
@@ -136,7 +165,7 @@ public class AdvancedCrafting extends JavaPlugin{
 	
 	@Override
 	public void onDisable(){
-		getPl().getLogger().info("Disabled");
+		pl.getLogger().info("Disabled");
 	}
 	
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args){			
@@ -262,7 +291,7 @@ public class AdvancedCrafting extends JavaPlugin{
 	
 	public void CreateRecipes(){
 		if(recCfg.isSet("Recipes")){
-			
+			recCfg.set("Recipes", null);
 			try {
 				pl.recCfg.set("Recipes", null);
 				pl.recCfg.save(pl.recCfgFile);
@@ -270,17 +299,18 @@ public class AdvancedCrafting extends JavaPlugin{
 				pl.reloadConfig();
 			} catch (IOException e) {
 				e.printStackTrace();
-			}
-			if (pl.recCfg.getList("").isEmpty()){
+				pl.getLogger().severe("An error occured. Disabling plugin");
+				pl.getServer().getPluginManager().disablePlugin(this);
 				return;
-			} else {
+			}
+
 				List<?> rec = pl.recCfg.getList("Recipes");
 				for(int i = 0; i < rec.size()-1; i++){
 					pl.getLogger().info(rec.get(i).toString());
-				}
 			}
 			
 		}
+		
 	}
 
 	/*****************GETTERS AND SETTERS*********************/
@@ -420,18 +450,27 @@ public class AdvancedCrafting extends JavaPlugin{
 			for (ItemStack i : inv){
 				try{
 					if (i.getItemMeta().equals(is.getItemMeta()) && i.getType().equals(is.getType())){
-						if (i.getAmount() >= count){
+						if (i.getAmount() > count){
 							//p.sendMessage(i.getAmount() + "count 1");
 							i.setAmount(i.getAmount() - count);
+							p.updateInventory();
 							//p.sendMessage(i.getAmount() + " count 2");
 							count = 0;
-						} else {
+							//p.sendMessage("A");
+						} else if (i.getAmount() == count){
+							p.getInventory().remove(i);
+							count = 0;
+							//p.sendMessage("B");
+						}
+						
+						else {
 							count -= i.getAmount();
 							i.setAmount(0);
+							//p.sendMessage("C");
 						}
 					}
 					if (count <= 0){
-						//p.sendMessage(count + "");
+						p.sendMessage(count + "");
 						p.updateInventory();
 						return;
 					}
