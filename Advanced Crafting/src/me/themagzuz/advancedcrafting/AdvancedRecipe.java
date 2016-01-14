@@ -138,8 +138,9 @@ public class AdvancedRecipe implements ConfigurationSerializable{
 				_pl.getLogger().info(in.get(temp.toString()).toString());
 			} else if (StringUtils.containsIgnoreCase(in.get(temp.toString()).toString(), "Ingredients")){
 				stage = ReadStage.INGREDIENTS;
-				for (int i = 0; i < )
+				for (int j = 0; j < 1; j++){
 					String str = "";
+				}
 			}
 			
 		}
