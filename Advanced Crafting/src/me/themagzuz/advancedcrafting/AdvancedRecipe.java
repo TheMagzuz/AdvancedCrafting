@@ -96,12 +96,8 @@ public class AdvancedRecipe implements ConfigurationSerializable{
 	@SuppressWarnings("deprecation")
 	@Override
 	public Map<String, Object> serialize() {
-
-
 		
-		
-		
-		
+		pl.getLogger().info("Starting serialization on recipe " + name);
 		
 		Map<String, Object> map = new HashMap<String, Object>();
 		
@@ -120,6 +116,8 @@ public class AdvancedRecipe implements ConfigurationSerializable{
 		
 		this.map = map;
 		
+		pl.getLogger().info("Serialization finished for recipe " + name);
+		
 		return map;
 	}
 	
@@ -128,18 +126,28 @@ public class AdvancedRecipe implements ConfigurationSerializable{
 		Object temp;
 		temp = in.keySet();
 
+		String name = (String) in.get("Name");
+		
 		int stage = ReadStage.NONE;
 		
 		Iterator i = in.keySet().iterator();
 		
+		_pl.getLogger().info("Name: " + name);
+		
 		while (i.hasNext()){
 			temp = i.next();
 			if (!StringUtils.containsIgnoreCase(in.get(temp.toString()).toString(), "MemorySection")){
-				_pl.getLogger().info(in.get(temp.toString()).toString());
+				//_pl.getLogger().info(in.get(temp.toString()).toString());
+				if (temp.toString().equalsIgnoreCase("Name")){
+					name = in.get(temp.toString()).toString();
+				}
 			} else if (StringUtils.containsIgnoreCase(in.get(temp.toString()).toString(), "Ingredients")){
 				stage = ReadStage.INGREDIENTS;
-				for (int j = 0; j < 1; j++){
+				ConfigurationSection sec = _pl.getRecipesCfg().getConfigurationSection(name + ".Ingredients");
+				for (Object ar : sec.getKeys(true).toArray()){
 					String str = "";
+					str = ar.getClass().getName();
+					_pl.getLogger().info(str);
 				}
 			}
 			

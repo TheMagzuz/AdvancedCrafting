@@ -87,7 +87,7 @@ public class AdvancedCrafting extends JavaPlugin{
 		}
 		try{
 			if (pl.getResource("Recipes.yml") == null){
-				recCfgFile = new File(pl.getDataFolder(), "Recipes.yml");
+				recCfgFile = new File(pl.getDataFolder().getPath() + "/Recipes.yml");
 			}
 		} catch (Exception e){
 			pl.getLogger().fine("Assuming there was no Recipes.yml file, creating one");
