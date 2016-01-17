@@ -119,10 +119,11 @@ public class AdvancedCrafting extends JavaPlugin{
 		
 		
 		config = pl.getConfig();
-		List<ItemStack> rec = Arrays.asList(new ItemStack(Material.DIRT, 2)/*, new ItemStack(Material.COBBLESTONE), new ItemStack(Material.DIAMOND), new ItemStack(Material.IRON_INGOT), new ItemStack(Material.GOLD_INGOT)*/);
+		List<ItemStack> rec = Arrays.asList(new ItemStack(Material.DIRT, 2 ,(byte) 3), new ItemStack(Material.COBBLESTONE) /*new ItemStack(Material.DIAMOND), new ItemStack(Material.IRON_INGOT), new ItemStack(Material.GOLD_INGOT)*/);
 		List<ItemStack> out = Arrays.asList(new ItemStack(Material.APPLE));
 		AdvancedRecipe reci = new AdvancedRecipe("Test", Material.APPLE, true, rec, out);
 		pl.getRecipesCfg().createSection(reci.getName(), reci.serialize());
+		rec.set(0, new ItemStack(Material.STONE));
 		AdvancedRecipe recip = new AdvancedRecipe("Test1", Material.STONE, true, rec, out);
 		pl.getRecipesCfg().createSection(recip.getName(), recip.serialize());
 		
@@ -359,22 +360,22 @@ public class AdvancedCrafting extends JavaPlugin{
 	
 	/*
 	 * SYNTAX: ITEMID:DATAVALUE:COUNT
-	 * Note that the item id is numeral.
+	 * Note that the item id is NOT numeral.
 	 */
 	
 	@SuppressWarnings("deprecation")
 	public ItemStack StringToItemStack(String str){
-		int item;
+		Material item;
 		int damage;
 		int size;
 		try{
-			item = Integer.parseInt(str.split(":")[0]);
+			item = Material.getMaterial(str.split(":")[0]);
 			damage = Integer.parseInt(str.split(":")[1]);
 			size = Integer.parseInt(str.split(":")[2]);
 			
 			
 		} catch(Exception e){
-			pl.getLogger().severe(String.format("String with value \"%s\" was passed but not recognized as an item. The syntax is \"ID:DATA:COUNT\", all values should be numbers", str));
+			pl.getLogger().severe(String.format("String with value \"%s\" was passed but not recognized as an item. The syntax is \"ID:DATA:COUNT\", it should be something on the lines of \"DIRT:1:3\"", str));
 			pl.getLogger().severe("This might also be an error on the plugins side. If you belive that your syntax is correct, please send your config.yml for this plugin to TheMagzuz on bukkit.org");
 			pl.getLogger().severe("Plugin disabled");
 			pl.getServer().getPluginManager().disablePlugin(this);
@@ -383,7 +384,7 @@ public class AdvancedCrafting extends JavaPlugin{
 		
 		ItemStack is;
 		
-		is = new ItemStack(Material.getMaterial(item), size, (byte) damage);
+		is = new ItemStack(item, size, (byte) damage);
 		if (pl.getInDebugMode()){
 			pl.getLogger().info("ID = " + item);
 			pl.getLogger().info("DATA = " + damage);

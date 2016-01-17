@@ -11,6 +11,7 @@ import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -108,9 +109,24 @@ public class AdvancedRecipe implements ConfigurationSerializable{
 		map.put(path + ".Item.Data", 0);
 		map.put(path + ".Item.Name", this.name);
 		for (int i = 0; i < this.getIngs().size(); i++){
+			/*
 			map.put(path + ".Ingredients." + i + ".ID", this.getIngs().get(i).getTypeId());
 			map.put(path + ".Ingredients." + i + ".Name", this.getIngs().get(i).getItemMeta().getDisplayName());
 			map.put(path + ".Ingredients." + i + ".Count", this.getIngs().get(i).getAmount());
+			*/
+			String value = i + "";
+			map.put(path + ".Ingredients." + value, this.getIngs().get(i).serialize());
+			if (!map.containsKey(path + ".Ingredients." + value + ".damage")){
+				map.put(path + ".Ingredients." + value + ".damage", 0);
+			}
+			if (!map.containsKey(path + ".Ingredients." + value + ".amount")){
+				map.put(path + ".Ingredients." + value + ".amount", 1);
+			}
+			if (this.getIngs().get(i).getItemMeta().getDisplayName() != null){
+				map.put(path + ".Ingredients." + value + ".Name", this.getIngs().get(i).getItemMeta().getDisplayName());
+			} else {
+				map.put(path + ".Ingredients." + value + ".Name", this.getIngs().get(i).getType().toString());
+			}
 		}
 		map.put(path + ".Glow", this.glow);
 		
@@ -121,7 +137,7 @@ public class AdvancedRecipe implements ConfigurationSerializable{
 		return map;
 	}
 	
-	@SuppressWarnings({ "deprecation", "unused", "rawtypes" })
+	@SuppressWarnings({ "unused" ,"deprecation", "rawtypes", "unchecked" })
 	public static AdvancedRecipe deserialize(Map<String, Object> in){
 		Object temp;
 		temp = in.keySet();
@@ -134,23 +150,50 @@ public class AdvancedRecipe implements ConfigurationSerializable{
 		
 		_pl.getLogger().info("Name: " + name);
 		
+		List<ItemStack> ingredients = new ArrayList<ItemStack>();
+		List<ItemStack> results = new ArrayList<ItemStack>();
+		
 		while (i.hasNext()){
 			temp = i.next();
+			/*if (temp == in.keySet().toArray()[0]){
+				_pl.getLogger().info("The 1st element is: " + temp.toString());
+			}*/
 			if (!StringUtils.containsIgnoreCase(in.get(temp.toString()).toString(), "MemorySection")){
 				//_pl.getLogger().info(in.get(temp.toString()).toString());
 				if (temp.toString().equalsIgnoreCase("Name")){
 					name = in.get(temp.toString()).toString();
 				}
-			} else if (StringUtils.containsIgnoreCase(in.get(temp.toString()).toString(), "Ingredients")){
+			} else if (StringUtils.containsIgnoreCase(in.get(temp.toString()).toString(), "Ingredients") || stage == ReadStage.INGREDIENTS){
 				stage = ReadStage.INGREDIENTS;
 				ConfigurationSection sec = _pl.getRecipesCfg().getConfigurationSection(name + ".Ingredients");
-				for (Object ar : sec.getKeys(true).toArray()){
+				int loops = 0;
+				for (Object ar : sec.getKeys(false).toArray()){
 					String str = "";
-					str = ar.getClass().getName();
-					_pl.getLogger().info(str);
+
+					
+					str = in.get("Ingredients." + ar.toString()).toString();
+					if (StringUtils.containsIgnoreCase(str, "MemorySection")){
+						// We're reading an item
+						/*String item = "";
+						item = item + (in.get("Ingredients." + ar.toString() + ".type")) + ":";*/
+						ConfigurationSection itemSec = (ConfigurationSection) in.get("Ingredients." + ar.toString());
+						Map<String, Object> map = itemSec.getValues(false);
+						ingredients.add(ItemStack.deserialize(map));
+						int loops2 = 0;
+						for (Player p : _pl.getServer().getOnlinePlayers()){
+							p.getInventory().addItem(ItemStack.deserialize(map));
+							p.sendMessage(loops2 + "");
+						}
+						_pl.getLogger().info("Looped over object: " + ar.toString() + " on loop number " + loops);
+						_pl.getLogger().info("The item returned was: " + ItemStack.deserialize(map).toString());
+						loops++;
+						//_pl.getLogger().info(item);
+					}
+				
 				}
+				stage = ReadStage.NONE;
 			}
-			
+
 		}
 		
 		AdvancedRecipe rec = new AdvancedRecipe("Test1", Material.STONE, true, new ArrayList<ItemStack>(), new ArrayList<ItemStack>());
