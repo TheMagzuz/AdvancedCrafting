@@ -31,6 +31,8 @@ public class AdvancedRecipe implements ConfigurationSerializable{
 	
 	private List<AdvancedItem> res;
 	
+	private List<ItemStack> ingItemStack, resItemStack;
+	
 	private int id;
 	
 	private boolean glow;
@@ -50,6 +52,14 @@ public class AdvancedRecipe implements ConfigurationSerializable{
 			meta.addEnchant(Enchantment.ARROW_DAMAGE, 1, true);
 			meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
 		}
+		
+		for (AdvancedItem i : ingredients){
+			ingItemStack.add(i.getItem());
+		}
+		for (AdvancedItem i : results){
+			resItemStack.add(i.getItem());
+		}
+		
 		icon.setItemMeta(meta);
 		AddItem(icon);
 		
@@ -79,12 +89,26 @@ public class AdvancedRecipe implements ConfigurationSerializable{
 		}
 	
 	
-	
+	@Deprecated
+	/*
+	 * Use getAIngs().get(i).getItem() instead 
+	 */
 	public List<ItemStack> getIngs(){
-		return ing;
+		return ingItemStack;
 	}
+	@Deprecated
+	/*
+	 * Use getAResults().get(i).getItem() instead 
+	 */
 	public List<ItemStack> getResults(){
-		return res;
+		return resItemStack;
+	}
+	
+	public List<AdvancedItem> getAIngs(){
+		return this.ing;
+	}
+	public List<AdvancedItem> getAResults(){
+		return this.res;
 	}
 	
 	public String getName(){
@@ -114,17 +138,17 @@ public class AdvancedRecipe implements ConfigurationSerializable{
 			map.put(path + ".Ingredients." + i + ".Count", this.getIngs().get(i).getAmount());
 			*/
 			String value = i + "";
-			map.put(path + ".Ingredients." + value, this.getIngs().get(i).serialize());
+			map.put(path + ".Ingredients." + value, this.getResults().get(i).serialize());
 			if (!map.containsKey(path + ".Ingredients." + value + ".damage")){
 				map.put(path + ".Ingredients." + value + ".damage", 0);
 			}
 			if (!map.containsKey(path + ".Ingredients." + value + ".amount")){
 				map.put(path + ".Ingredients." + value + ".amount", 1);
 			}
-			if (this.getIngs().get(i).getItemMeta().getDisplayName() != null){
-				map.put(path + ".Ingredients." + value + ".Name", this.getIngs().get(i).getItemMeta().getDisplayName());
+			if (this.getAIngs().get(i).getName() != null){
+				map.put(path + ".Ingredients." + value + ".Name", this.getAIngs().get(i).getName());
 			} else {
-				map.put(path + ".Ingredients." + value + ".Name", this.getIngs().get(i).getType().toString());
+				map.put(path + ".Ingredients." + value + ".Name", this.getAIngs().get(i).getItem().getType().toString());
 			}
 		}
 		for (int i = 0; i < this.getResults().size(); i++){
@@ -144,10 +168,10 @@ public class AdvancedRecipe implements ConfigurationSerializable{
 			if (!map.containsKey(path + ".Results." + value + ".amount")){
 				map.put(path + ".Results." + value + ".amount", 1);
 			}
-			if (this.getIngs().get(i).getItemMeta().getDisplayName() != null){
-				map.put(path + ".Results." + value + ".Name", this.getIngs().get(i).getItemMeta().getDisplayName());
+			if (this.getAResults().get(i).getName() != null){
+				map.put(path + ".Results." + value + ".Name", this.getAResults().get(i).getName());
 			} else {
-				map.put(path + ".Results." + value + ".Name", this.getIngs().get(i).getType().toString());
+				map.put(path + ".Results." + value + ".Name", this.getAResults().get(i).getItem().getType().toString());
 			}
 		}
 		map.put(path + ".Glow", this.glow);
