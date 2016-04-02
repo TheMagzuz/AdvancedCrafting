@@ -1,0 +1,12 @@
+name: AdvancedCrafting
+main: me.themagzuz.advancedcrafting.AdvancedCrafting
+version: 0.1
+authors: [TheMagzuz]
+commands:
+   craft:
+      description: Opens the crafting interface
+      usage: /<command>
+   cadmin:
+      description: Admin command for Advanced Crafting
+      usage: /<command> [SubCommand]
+   
