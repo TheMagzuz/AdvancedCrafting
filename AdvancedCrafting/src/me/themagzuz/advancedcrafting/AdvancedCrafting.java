@@ -120,11 +120,11 @@ public class AdvancedCrafting extends JavaPlugin{
 		
 		
 		config = pl.getConfig();
-		List<ItemStack> rec = Arrays.asList(new ItemStack(Material.DIRT, 2 ,(byte) 3), new ItemStack(Material.COBBLESTONE) /*new ItemStack(Material.DIAMOND), new ItemStack(Material.IRON_INGOT), new ItemStack(Material.GOLD_INGOT)*/);
-		List<ItemStack> out = Arrays.asList(new ItemStack(Material.APPLE));
+		ArrayList<AdvancedItem> rec = (ArrayList<AdvancedItem>) Arrays.asList(new AdvancedItem(new ItemStack(Material.DIRT, 2 ,(byte) 3), "Dirt"),new AdvancedItem( new ItemStack(Material.COBBLESTONE), "Cobblestone") /*new ItemStack(Material.DIAMOND), new ItemStack(Material.IRON_INGOT), new ItemStack(Material.GOLD_INGOT)*/);
+		ArrayList<AdvancedItem> out = (ArrayList<AdvancedItem>) Arrays.asList(new AdvancedItem(new ItemStack(Material.APPLE), "Apple"));
 		AdvancedRecipe reci = new AdvancedRecipe("Test", Material.APPLE, true, rec, out);
 		pl.getRecipesCfg().createSection(reci.getName(), reci.serialize());
-		rec.set(0, new ItemStack(Material.STONE));
+		rec.set(0, new AdvancedItem(new ItemStack(Material.STONE), "Stone"));
 		AdvancedRecipe recip = new AdvancedRecipe("Test1", Material.STONE, true, rec, out);
 		pl.getRecipesCfg().createSection(recip.getName(), recip.serialize());
 		
