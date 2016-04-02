@@ -43,11 +43,12 @@ public class AdvancedCrafting extends JavaPlugin{
 	
 	private Permission admin = new Permission("AdvancedCrafting.admin");
 	
-	private ItemStack seperator;
 	
 	/* PAGE ITEMS ETC. */
 	
 	// These are initialized in the InitItems function
+	private ItemStack seperator;
+	
 	private ItemStack nextPageItem;
 	
 	private ItemStack prevPageItem;
@@ -56,7 +57,7 @@ public class AdvancedCrafting extends JavaPlugin{
 	
 	private boolean debugMode;
 	
-	/*
+	/**
 	 * NEVER use this. This is only for use in the static getter function
 	 */
 	private static AdvancedCrafting pl;

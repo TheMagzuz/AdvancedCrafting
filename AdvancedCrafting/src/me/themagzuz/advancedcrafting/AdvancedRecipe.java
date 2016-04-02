@@ -27,9 +27,13 @@ public class AdvancedRecipe implements ConfigurationSerializable{
 	
 	private List<AdvancedItem> ing;
 	
-	private Map<String, Object> map;
-	
 	private List<AdvancedItem> res;
+	
+	private List<ItemStack> ingI;
+	
+	private List<ItemStack> resI;
+	
+	private Map<String, Object> map;
 	
 	private int id;
 	
@@ -60,6 +64,14 @@ public class AdvancedRecipe implements ConfigurationSerializable{
 		
 	}
 	
+
+	
+	protected AdvancedRecipe(String nm, Material mat, boolean glw, List<ItemStack> ingredients, List<ItemStack> results) {
+		
+	}
+
+
+
 	public ItemStack getItem(){
 		return icon;
 	}
@@ -81,9 +93,16 @@ public class AdvancedRecipe implements ConfigurationSerializable{
 	
 	
 	public List<ItemStack> getIngs(){
-		return ing;
+		return ingI;
 	}
 	public List<ItemStack> getResults(){
+		return resI;
+	}
+	public List<AdvancedItem> getIngsA(){
+		return ing;
+	}
+	
+	public List<AdvancedItem> getResA(){
 		return res;
 	}
 	
@@ -104,9 +123,7 @@ public class AdvancedRecipe implements ConfigurationSerializable{
 		String path = "";
 		
 		map.put(path + ".Name", this.name);
-		map.put(path + ".Item.ID", this.getItem().getTypeId());
-		map.put(path + ".Item.Data", 0);
-		map.put(path + ".Item.Name", this.name);
+		map.put(path + ".Item", this.getItem().serialize());
 		for (int i = 0; i < this.getIngs().size(); i++){
 			/*
 			map.put(path + ".Ingredients." + i + ".ID", this.getIngs().get(i).getTypeId());
@@ -166,7 +183,7 @@ public class AdvancedRecipe implements ConfigurationSerializable{
 
 		String name = (String) in.get("Name");
 		
-		int stage = ReadStage.NONE;
+		ReadStage stage = ReadStage.NONE;
 		
 		Iterator i = in.keySet().iterator();
 		
