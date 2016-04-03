@@ -13,6 +13,3 @@ hs_err_pid*
 
 # Build Files#
 *.xml
-
-# Web Files #
-index.html
