@@ -24,6 +24,12 @@ import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.json.simple.parser.ParseException;
+
+import me.themagzuz.advancedcrafting.datatypes.ACPlayer;
+import me.themagzuz.advancedcrafting.datatypes.AdvancedItem;
+import me.themagzuz.advancedcrafting.datatypes.AdvancedRecipe;
+import me.themagzuz.advancedcrafting.listeners.PlayerListener;
+
 import org.bukkit.enchantments.Enchantment;
 
 

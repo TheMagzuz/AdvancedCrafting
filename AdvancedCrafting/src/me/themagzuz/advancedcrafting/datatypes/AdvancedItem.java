@@ -1,4 +1,4 @@
-package me.themagzuz.advancedcrafting;
+package me.themagzuz.advancedcrafting.datatypes;
 
 import java.util.HashMap;
 import java.util.Map;

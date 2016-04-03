@@ -1,4 +1,4 @@
-package me.themagzuz.advancedcrafting;
+package me.themagzuz.advancedcrafting.listeners;
 
 import java.io.IOException;
 
@@ -11,6 +11,10 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+
+import me.themagzuz.advancedcrafting.AdvancedCrafting;
+import me.themagzuz.advancedcrafting.datatypes.ACPlayer;
+import me.themagzuz.advancedcrafting.datatypes.AdvancedRecipe;
 
 public class PlayerListener implements Listener{
 

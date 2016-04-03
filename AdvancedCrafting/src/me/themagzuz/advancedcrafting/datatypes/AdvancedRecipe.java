@@ -1,4 +1,4 @@
-package me.themagzuz.advancedcrafting;
+package me.themagzuz.advancedcrafting.datatypes;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,6 +16,8 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+
+import me.themagzuz.advancedcrafting.AdvancedCrafting;
 
 public class AdvancedRecipe implements ConfigurationSerializable {
 

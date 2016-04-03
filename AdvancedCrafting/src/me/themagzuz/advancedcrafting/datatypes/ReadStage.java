@@ -1,4 +1,4 @@
-package me.themagzuz.advancedcrafting;
+package me.themagzuz.advancedcrafting.datatypes;
 
 public enum ReadStage {
 

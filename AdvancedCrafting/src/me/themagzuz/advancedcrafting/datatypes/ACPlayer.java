@@ -1,4 +1,4 @@
-package me.themagzuz.advancedcrafting;
+package me.themagzuz.advancedcrafting.datatypes;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,6 +9,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+
+import me.themagzuz.advancedcrafting.AdvancedCrafting;
 
 public class ACPlayer {
 
