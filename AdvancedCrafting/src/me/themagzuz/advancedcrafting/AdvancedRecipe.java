@@ -19,25 +19,80 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 public class AdvancedRecipe implements ConfigurationSerializable {
 
+	/**
+	 * The name of the recipe
+	 */
+
 	private String name;
+
+	/**
+	 * The item to display in the menu
+	 */
 
 	private ItemStack icon;
 
+	/**
+	 * The plugin
+	 */
+
 	private AdvancedCrafting pl = AdvancedCrafting.getPl();
+
+	/**
+	 * The ingredients of the recipe
+	 */
 
 	private List<AdvancedItem> ing;
 
+	/**
+	 * I honestly don't remember :/
+	 */
+
 	private Map<String, Object> map;
+
+	/**
+	 * The results of the recipe
+	 */
 
 	private List<AdvancedItem> res;
 
+	/**
+	 * The results and the ingredients of the recipe in form of an itemstack
+	 */
+
 	private List<ItemStack> ingItemStack, resItemStack;
+
+	/**
+	 * The id of the recipe <br>
+	 * This should NEVER be changed
+	 */
 
 	private int id;
 
+	/**
+	 * Whether or not the recipe icon has an enchantment glow
+	 */
+
 	private boolean glow;
 
+	/**
+	 * The plugin instance For use in static methods
+	 */
+
 	private static AdvancedCrafting _pl = AdvancedCrafting.getPl();
+
+	/**
+	 * 
+	 * @param nm
+	 *            The name of the recipe
+	 * @param ico
+	 *            The icon of the recipe
+	 * @param glw
+	 *            Does the icon have an enchantment glow?
+	 * @param ingredients
+	 *            The ingredients of the recipe
+	 * @param results
+	 *            The output of the recipe
+	 */
 
 	public AdvancedRecipe(String nm, Material ico, boolean glw, ArrayList<AdvancedItem> ingredients,
 			ArrayList<AdvancedItem> results) {
@@ -70,6 +125,11 @@ public class AdvancedRecipe implements ConfigurationSerializable {
 		pl.getRecipes().add(this);
 
 	}
+
+	/**
+	 * 
+	 * @return The item of the recipe
+	 */
 
 	public ItemStack getItem() {
 		return icon;
@@ -119,7 +179,7 @@ public class AdvancedRecipe implements ConfigurationSerializable {
 	 * 
 	 * @return The list of ingredients in form of a list of itemstacks
 	 */
-	
+
 	public List<ItemStack> getIngs() {
 		return ingItemStack;
 	}
@@ -128,7 +188,7 @@ public class AdvancedRecipe implements ConfigurationSerializable {
 	 * 
 	 * @return The list of results in form of a list of itemstacks
 	 */
-	
+
 	public List<ItemStack> getResults() {
 		return resItemStack;
 	}
@@ -137,7 +197,7 @@ public class AdvancedRecipe implements ConfigurationSerializable {
 	 * 
 	 * @return The list of ingredients in form of a list of advanced items
 	 */
-	
+
 	public List<AdvancedItem> getAIngs() {
 		return this.ing;
 	}
@@ -146,7 +206,7 @@ public class AdvancedRecipe implements ConfigurationSerializable {
 	 * 
 	 * @return The list of results in form of a list of advanced items
 	 */
-	
+
 	public List<AdvancedItem> getAResults() {
 		return this.res;
 	}
@@ -155,11 +215,17 @@ public class AdvancedRecipe implements ConfigurationSerializable {
 	 * 
 	 * @return The name of the recipe
 	 */
-	
+
 	public String getName() {
 		return name;
 	}
 
+	
+	
+	/**
+	 * @return The recipe in form of a map<br>
+	 * Used for storing in YAML
+	 */
 	@SuppressWarnings("deprecation")
 	@Override
 	public Map<String, Object> serialize() {
@@ -232,7 +298,12 @@ public class AdvancedRecipe implements ConfigurationSerializable {
 
 		return map;
 	}
-
+	/**
+	 * 
+	 * @param in The map to deserialize
+	 * @return An AdvancedRecipe based on the map that was given<br>
+	 * Returns null and throws error if map is not valid
+	 */
 	@SuppressWarnings({ "unused", "deprecation", "rawtypes", "unchecked" })
 	public static AdvancedRecipe deserialize(Map<String, Object> in) {
 		Object temp;
