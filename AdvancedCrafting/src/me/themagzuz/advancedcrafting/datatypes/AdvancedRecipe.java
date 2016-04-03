@@ -6,18 +6,17 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import me.themagzuz.advancedcrafting.AdvancedCrafting;
+import me.themagzuz.advancedcrafting.exceptions.InvalidMapException;
 
 public class AdvancedRecipe implements ConfigurationSerializable {
 
@@ -306,8 +305,8 @@ public class AdvancedRecipe implements ConfigurationSerializable {
 	 * @return An AdvancedRecipe based on the map that was given<br>
 	 * Returns null and throws error if map is not valid
 	 */
-	@SuppressWarnings({ "unused", "deprecation", "rawtypes", "unchecked" })
-	public static AdvancedRecipe deserialize(Map<String, Object> in) {
+	@SuppressWarnings({ "unused", "rawtypes" })
+	public static AdvancedRecipe deserialize(Map<String, Object> in) throws InvalidMapException{
 		Object temp;
 		temp = in.keySet();
 
